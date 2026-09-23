@@ -2,20 +2,24 @@
 import wollok.game.*
 
 object lionel {
-	
-	var property position = game.at(3,5)
 	const objetivo = pelota
-	
-	method image() {
-		return "lionel-titular.png"
-	}
-
+	var property position = game.at(3,5)
+	var estado = "titular"
 	method retroceder() {
-		position = game.at(0.max(position.x() - 1), position.y()) 
+		position = game.at(0.max(position.x() - 1), position.y())
 	}
 	
 	method avanzar() {
-		position = game.at((game.width() - 1).min(position.x() + 1), position.y()) 
+		position = game.at((game.width() - 1).min(position.x() + 1), position.y())
+	}
+	method patear(){
+		self.validarPosicionParaPatear(objetivo)
+		objetivo.patear()
+	}
+	method validarPosicionParaPatear(_objetivo){
+		if (not self.position() == _objetivo.position()){
+			 self.error("No se puede patear la pelota,no está en la misma posición")
+		}
 	}
 
 	method paseAtras() {
@@ -29,8 +33,29 @@ object lionel {
 	  }
 	}
 	
-}
+	method cambiarCamiseta() {
+		self.validarCambiarCamiseta()
+		if (estado == "titular") {
+			estado = "suplente"
+		} else {
+			estado = "titular"
+		}
+	}
+	
+	method validarCambiarCamiseta() {
+		if (not (position == objetivo.position())) self.error(
+				"lionel no esta en el lugar correcto"
+			)
+	}
 
+	method buscar() {
+		position = objetivo.position()
+	}
+
+
+
+
+}
 
 object pelota {
 	const property image="pelota.png"
@@ -39,13 +64,13 @@ object pelota {
 	method nuevaPosicion() {
 	  position = game.at( (0).max(position.x() - 2) ,position.y()) 
 	}
+
+	method patear(){
+		position = game.at((game.width() - 1).min(position.x() + 3), position.y())
+	}
+
+	method inicio() {
+		position = game.at(0,5)
+	}
 }
 
-
-/*
-Taquito: Hacer Lionel de un pase atrás al apretar la tecla t:
- La pelota se mueve 2 posiciones a la izquierda. (o lo máximo que se pueda mover) 
- Tip: usar el método max de los números entre el x actual de la pelota - 2 y 0. 
- Validar que la pelota se encuentre en la misma posición que Lionel.
-
-*/
